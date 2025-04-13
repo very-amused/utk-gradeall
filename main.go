@@ -49,8 +49,8 @@ func runGradescript(scriptNo int, wg *sync.WaitGroup, nCorrect *atomic.Uint32) {
 	os.RemoveAll(chrootDir)
 	os.Mkdir(chrootDir, 0o700)
 
-	// Link `Gradescript-Examples`, `bin`, and all executables in the CWD to our temp dir
-	linkfiles := []string{"Gradescript-Examples", "bin", "gradescript"}
+	// Copy `Gradescript-Examples`, `bin`, and all executables in the CWD to our temp dir
+	copyFiles := []string{"Gradescript-Examples", "bin", "gradescript"}
 	dirents, err := os.ReadDir(".")
 	if err != nil {
 		fmt.Fprintln(os.Stderr, "Failed to read CWD")
@@ -63,10 +63,16 @@ func runGradescript(scriptNo int, wg *sync.WaitGroup, nCorrect *atomic.Uint32) {
 		if !mode.IsRegular() || (mode&0o100) == 0 {
 			continue
 		}
-		linkfiles = append(linkfiles, dirent.Name())
+		copyFiles = append(copyFiles, dirent.Name())
 	}
-	for _, file := range linkfiles {
-		if err := os.Symlink(file, path.Join(chrootDir, file)); err != nil {
+	for _, file := range copyFiles {
+		info, _ := os.Stat(file)
+		if info.IsDir() {
+			err = os.CopyFS(path.Join(chrootDir, file), os.DirFS(file))
+		} else {
+			err = os.Link(file, path.Join(chrootDir, file))
+		}
+		if err != nil {
 			fmt.Fprintf(os.Stderr, "Warning: failed to link file %s\n", file)
 			wg.Done()
 			return
