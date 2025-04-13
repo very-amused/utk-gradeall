@@ -15,7 +15,7 @@ const nScripts = 100
 
 func main() {
 	// Validate args
-	if len(os.Args) != 0 {
+	if len(os.Args) != 1 {
 		fmt.Fprintln(os.Stderr, "usage: gradeall")
 		os.Exit(1)
 	}
