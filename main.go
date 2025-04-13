@@ -40,7 +40,7 @@ func main() {
 
 	wg.Wait()
 
-	fmt.Printf("%d correct out of %d", nCorrect.Load(), nScripts)
+	fmt.Printf("%d correct out of %d\n", nCorrect.Load(), nScripts)
 }
 
 func runGradescript(scriptNo int, wg *sync.WaitGroup, nCorrect *atomic.Uint32) {
