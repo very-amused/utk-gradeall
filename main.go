@@ -30,6 +30,16 @@ func main() {
 		os.Exit(1)
 	}
 
+	// Check required files
+	if info, err := os.Stat("gradescript"); err != nil || !info.Mode().IsRegular() {
+		fmt.Fprintf(os.Stderr, "missing gradescript file\n")
+		os.Exit(1)
+	}
+	if info, err := os.Stat("Gradescript-Examples"); err != nil || !info.IsDir() {
+		fmt.Fprintf(os.Stderr, "missing Gradescript-Examples dir\n")
+		os.Exit(1)
+	}
+
 	var wg sync.WaitGroup
 	var nCorrect atomic.Uint32
 
@@ -75,9 +85,7 @@ func runGradescript(scriptNo int, wg *sync.WaitGroup, nCorrect *atomic.Uint32) {
 			err = os.Link(file, path.Join(chrootDir, file))
 		}
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "Warning: failed to link file %s\n", file)
-			wg.Done()
-			return
+			fmt.Fprintf(os.Stderr, "Warning: failed to copy file %s\n", file)
 		}
 	}
 
