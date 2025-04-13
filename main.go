@@ -1,11 +1,13 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"os"
 	"os/exec"
 	"path"
 	"strconv"
+	"strings"
 	"sync"
 	"sync/atomic"
 )
@@ -92,10 +94,22 @@ func runGradescript(scriptNo int, wg *sync.WaitGroup, nCorrect *atomic.Uint32) {
 	// Run the gradescript
 	cmd := exec.Command("bash", "gradescript", strconv.Itoa(scriptNo))
 	cmd.Dir = chrootDir
-	err = cmd.Run()
-	if err == nil {
+	stdout, _ := cmd.StdoutPipe()
+	err = cmd.Start()
+	scanner := bufio.NewScanner(stdout)
+	var correct bool
+	if scanner.Scan() {
+		head := strings.Fields(scanner.Text())
+		correct = head[len(head)-1] == "correct."
+	}
+	for scanner.Scan() {
+		// Flush the rest of stdout
+	}
+	cmd.Wait()
+
+	if err == nil && correct {
 		nCorrect.Add(1)
-		fmt.Printf("Problem %d is correct\n", scriptNo)
+		fmt.Printf("Problem %d is correct.\n", scriptNo)
 	} else {
 		fmt.Printf("Problem %d is incorrect.\n", scriptNo)
 	}
