@@ -68,7 +68,9 @@ func runGradescript(scriptNo int, wg *sync.WaitGroup, nCorrect *atomic.Uint32) {
 	for _, file := range copyFiles {
 		info, _ := os.Stat(file)
 		if info.IsDir() {
-			err = os.CopyFS(path.Join(chrootDir, file), os.DirFS(file))
+			//err = os.CopyFS(path.Join(chrootDir, file), os.DirFS(file))
+			cmd := exec.Command("cp", "-r", file, path.Join(chrootDir, file))
+			err = cmd.Run()
 		} else {
 			err = os.Link(file, path.Join(chrootDir, file))
 		}
