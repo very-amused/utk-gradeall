@@ -50,7 +50,7 @@ func runGradescript(scriptNo int, wg *sync.WaitGroup, nCorrect *atomic.Uint32) {
 	os.Mkdir(chrootDir, 0o700)
 
 	// Link `Gradescript-Examples`, `bin`, and all executables in the CWD to our temp dir
-	linkfiles := []string{"Gradescript-Examples", "bin"}
+	linkfiles := []string{"Gradescript-Examples", "bin", "gradescript"}
 	dirents, err := os.ReadDir(".")
 	if err != nil {
 		fmt.Fprintln(os.Stderr, "Failed to read CWD")
