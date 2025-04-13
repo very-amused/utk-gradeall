@@ -74,7 +74,7 @@ func runGradescript(scriptNo int, wg *sync.WaitGroup, nCorrect *atomic.Uint32) {
 	}
 
 	// Run the gradescript
-	cmd := exec.Command("gradescript", strconv.Itoa(scriptNo))
+	cmd := exec.Command("bash", "gradescript", strconv.Itoa(scriptNo))
 	cmd.Dir = chrootDir
 	err = cmd.Run()
 	if err == nil {
