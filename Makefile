@@ -1,6 +1,6 @@
-gradeall:
+gradeall-alt:
 	go build -o $@
-.PHONY: gradeall
+.PHONY: gradeall-alt
 
 clean:
 	go clean

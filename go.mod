@@ -1,3 +1,3 @@
 module github.com/very-amused/utk-gradeall
 
-go 1.24.2
+go 1.22.0
